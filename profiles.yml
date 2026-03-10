@@ -1,0 +1,9 @@
+Discovery_TPCH_SF1:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      role: ACCOUNTADMIN
+      warehouse: COMPUTE_WH
+      database: SNOWFLAKE_SAMPLE_DATA
+      schema: TPCH_SF1
