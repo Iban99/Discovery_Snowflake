@@ -1,0 +1,221 @@
+version: 2
+
+models:
+  - name: stg_region
+    description: "Silver table for region, cleaned and deduplicated"
+    columns:
+      - name: region_id
+        description: "Primary key of the region"
+        tests:
+          - not_null
+          - unique
+      - name: region_name
+        description: "Name of the region"
+        tests:
+          - not_null
+      - name: comment
+        description: "Comment from the source table"
+
+  - name: stg_nation
+    description: "Silver table for nation, joined with region"
+    columns:
+      - name: nation_id
+        description: "Primary key of the nation"
+        tests:
+          - not_null
+          - unique
+      - name: nation_name
+        description: "Name of the nation"
+        tests:
+          - not_null
+      - name: region_id
+        description: "FK to stg_region"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_region')
+              field: region_id
+      - name: region_name
+        description: "Region name from join"
+
+  - name: stg_customer
+    description: "Silver table for customer with cleaned data"
+    columns:
+      - name: customer_id
+        description: "Primary key"
+        tests:
+          - not_null
+          - unique
+      - name: customer_name
+        description: "Customer name"
+        tests:
+          - not_null
+      - name: nation_id
+        description: "FK to stg_nation"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_nation')
+              field: nation_id
+      - name: address
+        description: "Customer address"
+      - name: phone
+        description: "Customer phone"
+      - name: account_balance
+        description: "Account balance"
+      - name: market_segment
+        description: "Market segment"
+
+  - name: stg_supplier
+    description: "Silver table for suppliers"
+    columns:
+      - name: supplier_id
+        description: "Primary key"
+        tests:
+          - not_null
+          - unique
+      - name: supplier_name
+        description: "Supplier name"
+        tests:
+          - not_null
+      - name: nation_id
+        description: "FK to stg_nation"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_nation')
+              field: nation_id
+      - name: address
+        description: "Supplier address"
+      - name: phone
+        description: "Supplier phone"
+      - name: account_balance
+        description: "Supplier account balance"
+
+  - name: stg_part
+    description: "Silver table for parts"
+    columns:
+      - name: part_id
+        description: "Primary key"
+        tests:
+          - not_null
+          - unique
+      - name: part_name
+        description: "Part name"
+      - name: manufacturer
+        description: "Part manufacturer"
+      - name: brand
+        description: "Part brand"
+      - name: part_type
+        description: "Type of part"
+      - name: size
+        description: "Size of the part"
+      - name: container
+        description: "Container type"
+      - name: retail_price
+        description: "Retail price"
+
+  - name: stg_partsupp
+    description: "Silver table for part suppliers"
+    columns:
+      - name: part_id
+        description: "FK to stg_part"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_part')
+              field: part_id
+      - name: supplier_id
+        description: "FK to stg_supplier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_supplier')
+              field: supplier_id
+      - name: available_quantity
+        description: "Quantity available"
+      - name: supply_cost
+        description: "Cost of supply"
+
+  - name: stg_orders
+    description: "Silver table for orders cleaned and deduplicated"
+    columns:
+      - name: order_id
+        description: "Primary key of orders"
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "FK to stg_customer"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_customer')
+              field: customer_id
+      - name: order_status
+        description: "Status of the order"
+      - name: total_price
+        description: "Total price of the order"
+      - name: order_date
+        description: "Date of the order"
+      - name: order_priority
+        description: "Priority of the order"
+      - name: clerk
+        description: "Clerk handling the order"
+      - name: ship_priority
+        description: "Shipping priority"
+      - name: comment
+        description: "Comments"
+
+  - name: stg_lineitem
+    description: "Silver table for line items, cleaned and deduplicated"
+    columns:
+      - name: order_id
+        description: "FK to stg_orders"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_orders')
+              field: order_id
+      - name: line_number
+        description: "Line number in order"
+        tests:
+          - not_null
+      - name: part_id
+        description: "FK to stg_part"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_part')
+              field: part_id
+      - name: supplier_id
+        description: "FK to stg_supplier"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_supplier')
+              field: supplier_id
+      - name: quantity
+        description: "Quantity ordered"
+      - name: extended_price
+        description: "Extended price"
+      - name: discount
+        description: "Discount applied"
+      - name: tax
+        description: "Tax applied"
+      - name: return_flag
+        description: "Return flag"
+      - name: line_status
+        description: "Line status"
+      - name: ship_date
+        description: "Shipping date"
+      - name: commit_date
+        description: "Commit date"
+      - name: receipt_date
+        description: "Receipt date"
+      - name: ship_instruct
+        description: "Shipping instructions"
+      - name: ship_mode
+        description: "Shipping mode"
+      - name: comment
+        description: "Comments on the line item"
