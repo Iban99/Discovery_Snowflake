@@ -47,5 +47,5 @@ models:
       +materialized: table
     gold:
       +database: ANALYTICS_DB
-      +schema: silver
+      +schema: gold
       +materialized: table

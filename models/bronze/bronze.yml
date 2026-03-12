@@ -1,0 +1,137 @@
+version: 2
+
+models:
+
+  - name: raw_customer
+    description: "Raw customer table ingested from TPCH_SF1, Bronze layer."
+    columns:
+      - name: customer_id
+        description: "Unique customer identifier."
+        tests:
+          - not_null
+          - unique
+      - name: nation_id
+        description: "Reference to the Nation table."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('raw_nation')
+                field: nation_id
+
+  - name: raw_orders
+    description: "Raw orders table ingested from TPCH_SF1, Bronze layer."
+    columns:
+      - name: order_id
+        description: "Unique order identifier."
+        tests:
+          - not_null
+          - unique
+      - name: customer_id
+        description: "ID of the customer who placed the order."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('raw_customer')
+                field: customer_id
+
+  - name: raw_lineitem
+    description: "Raw order lines table ingested from TPCH_SF1, Bronze layer."
+    columns:
+      - name: order_id
+        description: "ID of the order for this line item."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('raw_orders')
+                field: order_id
+      - name: part_id
+        description: "ID of the part or product."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('raw_part')
+                field: part_id
+      - name: supplier_id
+        description: "ID of the supplier for the part."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('raw_supplier')
+                field: supplier_id
+
+  - name: raw_part
+    description: "Raw parts table from TPCH, Bronze layer."
+    columns:
+      - name: part_id
+        description: "Unique part identifier."
+        tests:
+          - not_null
+          - unique
+
+  - name: raw_partsupp
+    description: "Raw part-supplier relationship table, Bronze layer."
+    columns:
+      - name: part_id
+        description: "ID of the part."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('raw_part')
+                field: part_id
+      - name: supplier_id
+        description: "ID of the supplier."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('raw_supplier')
+                field: supplier_id
+
+  - name: raw_supplier
+    description: "Raw suppliers table, Bronze layer."
+    columns:
+      - name: supplier_id
+        description: "Unique supplier identifier."
+        tests:
+          - not_null
+          - unique
+      - name: nation_id
+        description: "Reference to Nation table."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('raw_nation')
+                field: nation_id  
+                
+  - name: raw_nation
+    description: "Raw nations table, Bronze layer."
+    columns:
+      - name: nation_id
+        description: "Unique nation identifier."
+        tests:
+          - not_null
+          - unique
+      - name: region_id
+        description: "ID of the region this nation belongs to."
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('raw_region')
+                field: region_id
+
+  - name: raw_region
+    description: "Raw regions table, Bronze layer."
+    columns:
+      - name: region_id
+        description: "Unique region identifier."
+        tests:
+          - not_null
+          - unique
