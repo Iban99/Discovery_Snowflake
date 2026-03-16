@@ -1,0 +1,168 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: "Customer dimension with first/last purchase dates, tenure, and active flag."
+    columns:
+      - name: customer_id
+        description: "Primary key of the customer"
+        tests:
+          - unique
+          - not_null
+      - name: first_purchase_date
+        description: "Date of customer's first purchase"
+      - name: last_purchase_date
+        description: "Date of customer's last purchase"
+      - name: active_customer
+        description: "Flag indicating if customer is active. We will consider it inactive if it has not purchased for more than a year."
+      - name: customer_tenure_days
+        description: "Number of days since first purchase"
+
+  - name: dim_product
+    description: "Product dimension with type, retail price and number of suppliers."
+    columns:
+      - name: part_id
+        description: "Primary key of the product"
+        tests:
+          - unique
+          - not_null
+      - name: num_suppliers
+        description: "Number of suppliers providing this product"
+
+  - name: dim_supplier
+    description: "Supplier dimension"
+    columns:
+      - name: supplier_id
+        description: "Primary key of the supplier"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_rfm_segments
+    description: "Mapping table for RFM segments based on R/F/M scores."
+    columns:
+      - name: r_score
+        description: "Recency score (1-5)"
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1,2,3,4,5]
+      - name: f_score
+        description: "Frequency score (1-5)"
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1,2,3,4,5]
+      - name: m_score
+        description: "Monetary score (1-5)"
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1,2,3,4,5]
+      - name: segment
+        description: "Segment label corresponding to the RFM score combination"
+        tests:
+          - accepted_values:
+              arguments:
+                values: [
+                  "Champions",
+                  "Loyal Customers",
+                  "Profitable Customers",
+                  "Potential Loyalists",
+                  "Big Spenders",
+                  "Recent Customers",
+                  "Promising",
+                  "At Risk",
+                  "Doubtful"]
+
+  - name: fact_sales
+    description: "Fact table with order details, enriched with product cost and profit."
+    columns:
+      - name: lineitem_id
+        description: "Primary key of the lineitem"
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        description: "Reference to the order"
+      - name: customer_id
+        description: "Reference to the customer"
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+      - name: part_id
+        description: "Reference to the product"
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: part_id
+      - name: supplier_id
+        description: "Reference to the supplier"
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_supplier')
+                field: supplier_id
+      - name: extended_price
+        description: "Unit price per quantity purchased"
+      - name: final_price
+        description: "Price after discounts and taxes, the amount charged to the customer."
+      - name: total_cost
+        description: "Total cost of the order to which the product belongs"
+
+  - name: agg_customer_rfm
+    description: "Aggregated customer RFM metrics for the last 12 months."
+    columns:
+      - name: customer_id
+        description: "Reference to the customer"
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
+      - name: recency
+        description: "Days since last purchase"
+      - name: frequency
+        description: "Number of orders in last 12 months"
+      - name: monetary
+        description: "Total revenue in last 12 months"
+      - name: r_score
+        description: "Recency score (1-5)"
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1,2,3,4,5]
+      - name: f_score
+        description: "Frequency score (1-5)"
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1,2,3,4,5]
+      - name: m_score
+        description: "Monetary score (1-5)"
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1,2,3,4,5]
+      - name: rfm_score
+        description: "Concatenated RFM score (R+F+M)"
+      - name: rfm_segment
+        description: "Customer segment based on RFM"
+        tests:
+          - accepted_values:
+              arguments:
+                values: [
+                  "Champions",
+                  "Loyal Customers",
+                  "Profitable Customers",
+                  "Potential Loyalists",
+                  "Big Spenders",
+                  "Recent Customers",
+                  "Promising",
+                  "At Risk",
+                  "Doubtful"]
