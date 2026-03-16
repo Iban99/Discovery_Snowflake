@@ -28,8 +28,18 @@ conda activate rfm_env
 ```bash
 cp profiles.yml.example ~/.dbt/profiles.yml
 ```
-3. Add your Snowflake credentials
-4. DBT execution
+4. Add your Snowflake credentials
+Yo can create a `.env` file in the project root:
+```ini
+DB_USER=your_user
+DB_PASSWORD=your_password
+DB_ACCOUNT=your_account
+DB_WAREHOUSE=your_warehouse
+DB_DATABASE=analytics_db
+DB_SCHEMA=gold
+```
+
+5. DBT execution
 - Verify conexion
 ```bash
 dbt debug
@@ -47,3 +57,17 @@ dbt test
 dbt docs generate
 dbt docs serve
 ```
+
+## 3. Project structure
+- `models/`: Contains the dbt models (Bronze, Silver, Gold)
+- `snapshots/`: Snapshots of tables for historical analysis
+- `analyses/`: Python notebooks for exploratory analysis and use cases
+- `macros/`: Reusable dbt functions and macros
+- `tests/`: Custom data quality tests
+- `.env`: Environment variables with credentials (do not upload to GitHub)
+
+## 4. Data pipeline overview
+- **Raw tables**: Original, untransformed data
+- **Bronze**: Basic cleaning and type changes, column renaming
+- **Silver**: Transformations, data quality control (nulls, duplicates) and some joins and new columns
+- **Gold**: Dimensions and facts ready for analysis
