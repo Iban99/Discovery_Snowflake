@@ -67,7 +67,10 @@ dbt docs serve
 - `.env`: Environment variables with credentials (do not upload to GitHub)
 
 ## 4. Data pipeline overview
-- **Raw tables**: Original, untransformed data
+- **Raw tables**: Original, untransformed data from TPCH_SF1 schema
 - **Bronze**: Basic cleaning and type changes, column renaming
 - **Silver**: Transformations, data quality control (nulls, duplicates) and some joins and new columns
 - **Gold**: Dimensions and facts ready for analysis
+
+## 5. Lineage
+![Lineage](images/Lineage.png)
