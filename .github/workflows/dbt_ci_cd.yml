@@ -45,15 +45,20 @@ jobs:
         run: conda run -n dbt_env dbt deps
 
       # 5. Ejecutar modelos capa por capa
+      - name: Prepare dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          cp .dbt/profiles.yml ~/.dbt/profiles.yml
+
       - name: Run Bronze models
-        run: conda run -n dbt_env dbt run --profiles-dir . --target bronze --models bronze.* || exit 1
+        run: conda run -n dbt_env dbt run --target bronze --select bronze.* || exit 1
 
       - name: Run Silver models
-        run: conda run -n dbt_env dbt run --profiles-dir . --target silver --models silver.* || exit 1
+        run: conda run -n dbt_env dbt run --target silver --select silver.* || exit 1
 
       - name: Run Gold models
-        run: conda run -n dbt_env dbt run --profiles-dir . --target gold --models gold.* || exit 1
+        run: conda run -n dbt_env dbt run --target gold --select gold.* || exit 1
 
       # 6. Ejecutar tests dbt
       - name: Run dbt tests
-        run: conda run -n dbt_env dbt test --profiles-dir .
+        run: conda run -n dbt_env dbt test
