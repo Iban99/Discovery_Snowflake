@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+env:
+  # Forzar Node.js 24 para evitar deprecaciones futuras
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   dbt-run:
     runs-on: ubuntu-latest
@@ -17,39 +21,39 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-       # 2. Setup Conda
+      # 2. Setup Conda
       - name: Setup Conda
         uses: conda-incubator/setup-miniconda@v2
         with:
           auto-update-conda: true
           python-version: 3.10.19
           environment-file: environment.yml
-          activate-environment: dbt_env    
+          activate-environment: dbt_env
 
       # 3. Configurar variables de entorno para Snowflake
       - name: Set Snowflake environment variables
         run: |
-          setx SNOWFLAKE_ACCOUNT "${{ secrets.SNOWFLAKE_ACCOUNT }}"
-          setx SNOWFLAKE_USER "${{ secrets.SNOWFLAKE_USER }}"
-          setx SNOWFLAKE_PASSWORD "${{ secrets.SNOWFLAKE_PASSWORD }}"
-          setx SNOWFLAKE_ROLE "${{ secrets.SNOWFLAKE_ROLE }}"
-          setx SNOWFLAKE_WAREHOUSE "${{ secrets.SNOWFLAKE_WAREHOUSE }}"
-          setx SNOWFLAKE_DATABASE "${{ secrets.ANALYTICS_DATABASE }}"
+          export SNOWFLAKE_ACCOUNT="${{ secrets.SNOWFLAKE_ACCOUNT }}"
+          export SNOWFLAKE_USER="${{ secrets.SNOWFLAKE_USER }}"
+          export SNOWFLAKE_PASSWORD="${{ secrets.SNOWFLAKE_PASSWORD }}"
+          export SNOWFLAKE_ROLE="${{ secrets.SNOWFLAKE_ROLE }}"
+          export SNOWFLAKE_WAREHOUSE="${{ secrets.SNOWFLAKE_WAREHOUSE }}"
+          export SNOWFLAKE_DATABASE="${{ secrets.ANALYTICS_DATABASE }}"
 
-      # 4. Instalar dependencias de dbt
+      # 4. Ejecutar dependencias de dbt usando el entorno Conda
       - name: Run dbt deps
-        run: dbt deps
+        run: conda run -n dbt_env dbt deps
 
       # 5. Ejecutar modelos capa por capa
       - name: Run Bronze models
-        run: dbt run --profiles-dir . --target bronze --models bronze.* || exit 1
+        run: conda run -n dbt_env dbt run --profiles-dir . --target bronze --models bronze.* || exit 1
 
       - name: Run Silver models
-        run: dbt run --profiles-dir . --target silver --models silver.* || exit 1
+        run: conda run -n dbt_env dbt run --profiles-dir . --target silver --models silver.* || exit 1
 
       - name: Run Gold models
-        run: dbt run --profiles-dir . --target gold --models gold.* || exit 1
+        run: conda run -n dbt_env dbt run --profiles-dir . --target gold --models gold.* || exit 1
 
       # 6. Ejecutar tests dbt
       - name: Run dbt tests
-        run: dbt test --profiles-dir . 
+        run: conda run -n dbt_env dbt test --profiles-dir .
