@@ -45,10 +45,6 @@ jobs:
         run: conda run -n dbt_env dbt deps
 
       # 5. Ejecutar modelos capa por capa
-      - name: Prepare dbt profile
-        run: |
-          mkdir -p ~/.dbt
-          cp .dbt/profiles.yml ~/.dbt/profiles.yml
       - name: Create dbt profile
         shell: pwsh
         run: |
