@@ -49,7 +49,44 @@ jobs:
         run: |
           mkdir -p ~/.dbt
           cp .dbt/profiles.yml ~/.dbt/profiles.yml
-
+      - name: Create dbt profile
+        run: |
+          mkdir -p ~/.dbt
+          cat <<EOF > ~/.dbt/profiles.yml
+          discovery_snowflake:
+            target: bronze
+            outputs:
+              bronze:
+                type: snowflake
+                account: ${SNOWFLAKE_ACCOUNT}
+                user: ${SNOWFLAKE_USER}
+                password: ${SNOWFLAKE_PASSWORD}
+                role: ${SNOWFLAKE_ROLE}
+                warehouse: ${SNOWFLAKE_WAREHOUSE}
+                database: ${ANALYTICS_DATABASE}
+                schema: BRONZE
+                threads: 1
+              silver:
+                type: snowflake
+                account: ${SNOWFLAKE_ACCOUNT}
+                user: ${SNOWFLAKE_USER}
+                password: ${SNOWFLAKE_PASSWORD}
+                role: ${SNOWFLAKE_ROLE}
+                warehouse: ${SNOWFLAKE_WAREHOUSE}
+                database: ${ANALYTICS_DATABASE}
+                schema: SILVER
+                threads: 1
+              gold:
+                type: snowflake
+                account: ${SNOWFLAKE_ACCOUNT}
+                user: ${SNOWFLAKE_USER}
+                password: ${SNOWFLAKE_PASSWORD}
+                role: ${SNOWFLAKE_ROLE}
+                warehouse: ${SNOWFLAKE_WAREHOUSE}
+                database: ${ANALYTICS_DATABASE}
+                schema: GOLD
+                threads: 1
+          EOF
       - name: Run Bronze models
         run: conda run -n dbt_env dbt run --target bronze --select bronze.* || exit 1
 
