@@ -52,45 +52,45 @@ jobs:
       - name: Create dbt profile
         shell: pwsh
         run: |
-          New-Item -ItemType Directory -Force -Path $HOME\.dbt
+          New-Item -ItemType Directory -Force -Path "$HOME\.dbt"
+          $profilePath = "$HOME\.dbt\profiles.yml"
 
-              @"
-        discovery_snowflake:
-          target: bronze
-          outputs:
-            bronze:
-              type: snowflake
-              account: $env:SNOWFLAKE_ACCOUNT
-              user: $env:SNOWFLAKE_USER
-              password: $env:SNOWFLAKE_PASSWORD
-              role: $env:SNOWFLAKE_ROLE
-              warehouse: $env:SNOWFLAKE_WAREHOUSE
-              database: $env:ANALYTICS_DATABASE
-              schema: BRONZE
-              threads: 1
+          "discovery_snowflake:" | Out-File $profilePath
+          "  target: bronze" | Out-File $profilePath -Append
+          "  outputs:" | Out-File $profilePath -Append
 
-            silver:
-              type: snowflake
-              account: $env:SNOWFLAKE_ACCOUNT
-              user: $env:SNOWFLAKE_USER
-              password: $env:SNOWFLAKE_PASSWORD
-              role: $env:SNOWFLAKE_ROLE
-              warehouse: $env:SNOWFLAKE_WAREHOUSE
-              database: $env:ANALYTICS_DATABASE
-              schema: SILVER
-              threads: 1
+          "    bronze:" | Out-File $profilePath -Append
+          "      type: snowflake" | Out-File $profilePath -Append
+          "      account: $env:SNOWFLAKE_ACCOUNT" | Out-File $profilePath -Append
+          "      user: $env:SNOWFLAKE_USER" | Out-File $profilePath -Append
+          "      password: $env:SNOWFLAKE_PASSWORD" | Out-File $profilePath -Append
+          "      role: $env:SNOWFLAKE_ROLE" | Out-File $profilePath -Append
+          "      warehouse: $env:SNOWFLAKE_WAREHOUSE" | Out-File $profilePath -Append
+          "      database: $env:ANALYTICS_DATABASE" | Out-File $profilePath -Append
+          "      schema: BRONZE" | Out-File $profilePath -Append
+          "      threads: 1" | Out-File $profilePath -Append
 
-            gold:
-              type: snowflake
-              account: $env:SNOWFLAKE_ACCOUNT
-              user: $env:SNOWFLAKE_USER
-              password: $env:SNOWFLAKE_PASSWORD
-              role: $env:SNOWFLAKE_ROLE
-              warehouse: $env:SNOWFLAKE_WAREHOUSE
-              database: $env:ANALYTICS_DATABASE
-              schema: GOLD
-              threads: 1
-                "@ | Out-File -Encoding utf8 $HOME\.dbt\profiles.yml
+          "    silver:" | Out-File $profilePath -Append
+          "      type: snowflake" | Out-File $profilePath -Append
+          "      account: $env:SNOWFLAKE_ACCOUNT" | Out-File $profilePath -Append
+          "      user: $env:SNOWFLAKE_USER" | Out-File $profilePath -Append
+          "      password: $env:SNOWFLAKE_PASSWORD" | Out-File $profilePath -Append
+          "      role: $env:SNOWFLAKE_ROLE" | Out-File $profilePath -Append
+          "      warehouse: $env:SNOWFLAKE_WAREHOUSE" | Out-File $profilePath -Append
+          "      database: $env:ANALYTICS_DATABASE" | Out-File $profilePath -Append
+          "      schema: SILVER" | Out-File $profilePath -Append
+          "      threads: 1" | Out-File $profilePath -Append
+
+          "    gold:" | Out-File $profilePath -Append
+          "      type: snowflake" | Out-File $profilePath -Append
+          "      account: $env:SNOWFLAKE_ACCOUNT" | Out-File $profilePath -Append
+          "      user: $env:SNOWFLAKE_USER" | Out-File $profilePath -Append
+          "      password: $env:SNOWFLAKE_PASSWORD" | Out-File $profilePath -Append
+          "      role: $env:SNOWFLAKE_ROLE" | Out-File $profilePath -Append
+          "      warehouse: $env:SNOWFLAKE_WAREHOUSE" | Out-File $profilePath -Append
+          "      database: $env:ANALYTICS_DATABASE" | Out-File $profilePath -Append
+          "      schema: GOLD" | Out-File $profilePath -Append
+          "      threads: 1" | Out-File $profilePath -Append
       - name: Run Bronze models
         run: conda run -n dbt_env dbt run --target bronze --select bronze.* || exit 1
 
