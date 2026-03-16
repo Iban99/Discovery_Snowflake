@@ -1,6 +1,6 @@
-# RFM Analysis projecto with Snowflake, DBT and Python
+# 📊 RFM Analysis projecto with Snowflake, DBT and Python
 
-## 1. Project description
+## 📋 1. Project description
 This project performs a complete RFM (Recency, Frequency, Monetary) analysis using transactional data. 
 The database is **snowflake_sample_data** and the schema is **TPCH_SF1**.
 It is implemented using **dbt** for data modeling and **Python** for analysis and visualization. **Snowflake** has been the data warehouse.
@@ -13,7 +13,7 @@ The project demonstrates:
 
 The main objective is the development of an END-TO-END analytics engineering project.
 
-## 2. Environment and Setup configuration
+## 🛠️ 2. Environment and Setup configuration
 1. Clone the repository
 ```bash
 git clone https://github.com/tu_usuario/tu_proyecto.git
@@ -58,7 +58,8 @@ dbt docs generate
 dbt docs serve
 ```
 
-## 3. Project structure
+## 🏗️ 3. Project structure
+Medallion architecture.
 - `models/`: Contains the dbt models (Bronze, Silver, Gold)
 - `snapshots/`: Snapshots of tables for historical analysis
 - `analyses/`: Python notebooks for exploratory analysis and use cases
@@ -66,7 +67,7 @@ dbt docs serve
 - `tests/`: Custom data quality tests
 - `.env`: Environment variables with credentials (do not upload to GitHub)
 
-## 4. Data pipeline overview
+## 🔗 4. Data pipeline overview
 - **Raw tables**: Original, untransformed data from TPCH_SF1 schema
 - **Bronze**: Basic cleaning and type changes, column renaming
 - **Silver**: Transformations, data quality control (nulls, duplicates) and some joins and new columns
@@ -74,3 +75,8 @@ dbt docs serve
 
 ## 5. Lineage
 ![Lineage](images/Lineage.png)
+
+
+## 👤 Author
+**Name**: Miriam Iban Gil 
+**Technologies**: Snowflake, dbt, Python
