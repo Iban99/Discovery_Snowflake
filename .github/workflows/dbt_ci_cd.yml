@@ -1,0 +1,55 @@
+name: dbt CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dbt-run:
+    runs-on: windows-latest
+
+    steps:
+      # 1. Traer el código del repo
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+       # 2. Setup Conda
+      - name: Setup Conda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: 3.10.19
+          environment-file: environment.yml
+          activate-environment: dbt_env    
+
+      # 3. Configurar variables de entorno para Snowflake
+      - name: Set Snowflake environment variables
+        run: |
+          setx SNOWFLAKE_ACCOUNT "${{ secrets.SNOWFLAKE_ACCOUNT }}"
+          setx SNOWFLAKE_USER "${{ secrets.SNOWFLAKE_USER }}"
+          setx SNOWFLAKE_PASSWORD "${{ secrets.SNOWFLAKE_PASSWORD }}"
+          setx SNOWFLAKE_ROLE "${{ secrets.SNOWFLAKE_ROLE }}"
+          setx SNOWFLAKE_WAREHOUSE "${{ secrets.SNOWFLAKE_WAREHOUSE }}"
+          setx SNOWFLAKE_DATABASE "${{ secrets.ANALYTICS_DATABASE }}"
+
+      # 4. Instalar dependencias de dbt
+      - name: Run dbt deps
+        run: dbt deps
+
+      # 5. Ejecutar modelos capa por capa
+      - name: Run Bronze models
+        run: dbt run --profiles-dir . --target bronze --models bronze.* || exit 1
+
+      - name: Run Silver models
+        run: dbt run --profiles-dir . --target silver --models silver.* || exit 1
+
+      - name: Run Gold models
+        run: dbt run --profiles-dir . --target gold --models gold.* || exit 1
+
+      # 6. Ejecutar tests dbt
+      - name: Run dbt tests
+        run: dbt test --profiles-dir . 
