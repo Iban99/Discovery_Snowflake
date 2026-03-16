@@ -33,12 +33,12 @@ jobs:
       # 3. Configurar variables de entorno para Snowflake
       - name: Set Snowflake environment variables
         run: |
-          export SNOWFLAKE_ACCOUNT="${{ secrets.SNOWFLAKE_ACCOUNT }}"
-          export SNOWFLAKE_USER="${{ secrets.SNOWFLAKE_USER }}"
-          export SNOWFLAKE_PASSWORD="${{ secrets.SNOWFLAKE_PASSWORD }}"
-          export SNOWFLAKE_ROLE="${{ secrets.SNOWFLAKE_ROLE }}"
-          export SNOWFLAKE_WAREHOUSE="${{ secrets.SNOWFLAKE_WAREHOUSE }}"
-          export SNOWFLAKE_DATABASE="${{ secrets.ANALYTICS_DATABASE }}"
+          $env:SNOWFLAKE_ACCOUNT = "${{ secrets.SNOWFLAKE_ACCOUNT }}"
+          $env:SNOWFLAKE_USER = "${{ secrets.SNOWFLAKE_USER }}"
+          $env:SNOWFLAKE_PASSWORD = "${{ secrets.SNOWFLAKE_PASSWORD }}"
+          $env:SNOWFLAKE_ROLE = "${{ secrets.SNOWFLAKE_ROLE }}"
+          $env:SNOWFLAKE_WAREHOUSE = "${{ secrets.SNOWFLAKE_WAREHOUSE }}"
+          $env:SNOWFLAKE_DATABASE = "${{ secrets.ANALYTICS_DATABASE }}"
 
       # 4. Ejecutar dependencias de dbt usando el entorno Conda
       - name: Run dbt deps
