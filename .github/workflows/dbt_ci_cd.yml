@@ -91,48 +91,6 @@ jobs:
               schema: GOLD
               threads: 1
                 "@ | Out-File -Encoding utf8 $HOME\.dbt\profiles.yml
-      - name: Create dbt profile
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path $HOME\.dbt
-
-          @"
-        discovery_snowflake:
-            target: bronze
-            outputs:
-              bronze:
-                type: snowflake
-                account: $env:SNOWFLAKE_ACCOUNT
-                user: $env:SNOWFLAKE_USER
-                password: $env:SNOWFLAKE_PASSWORD
-                role: $env:SNOWFLAKE_ROLE
-                warehouse: $env:SNOWFLAKE_WAREHOUSE
-                database: $env:ANALYTICS_DATABASE
-                schema: BRONZE
-                threads: 1
-
-              silver:
-                type: snowflake
-                account: $env:SNOWFLAKE_ACCOUNT
-                user: $env:SNOWFLAKE_USER
-                password: $env:SNOWFLAKE_PASSWORD
-                role: $env:SNOWFLAKE_ROLE
-                warehouse: $env:SNOWFLAKE_WAREHOUSE
-                database: $env:ANALYTICS_DATABASE
-                schema: SILVER
-                threads: 1
-
-              gold:
-                type: snowflake
-                account: $env:SNOWFLAKE_ACCOUNT
-                user: $env:SNOWFLAKE_USER
-                password: $env:SNOWFLAKE_PASSWORD
-                role: $env:SNOWFLAKE_ROLE
-                warehouse: $env:SNOWFLAKE_WAREHOUSE
-                database: $env:ANALYTICS_DATABASE
-                schema: GOLD
-                threads: 1
-          "@ | Out-File -Encoding utf8 $HOME\.dbt\profiles.yml
       - name: Run Bronze models
         run: conda run -n dbt_env dbt run --target bronze --select bronze.* || exit 1
 
