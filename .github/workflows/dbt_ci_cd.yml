@@ -14,7 +14,7 @@ env:
 
 jobs:
   dbt-run:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       # 1. Traer el código del repo
