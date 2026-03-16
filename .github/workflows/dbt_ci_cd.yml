@@ -38,7 +38,7 @@ jobs:
           $env:SNOWFLAKE_PASSWORD = "${{ secrets.SNOWFLAKE_PASSWORD }}"
           $env:SNOWFLAKE_ROLE = "${{ secrets.SNOWFLAKE_ROLE }}"
           $env:SNOWFLAKE_WAREHOUSE = "${{ secrets.SNOWFLAKE_WAREHOUSE }}"
-          $env:SNOWFLAKE_DATABASE = "${{ secrets.ANALYTICS_DATABASE }}"
+          $env:ANALYTICS_DATABASE = "${{ secrets.ANALYTICS_DATABASE }}"
 
       # 4. Ejecutar dependencias de dbt usando el entorno Conda
       - name: Run dbt deps
@@ -50,43 +50,89 @@ jobs:
           mkdir -p ~/.dbt
           cp .dbt/profiles.yml ~/.dbt/profiles.yml
       - name: Create dbt profile
+        shell: pwsh
         run: |
-          mkdir -p ~/.dbt
-          cat <<EOF > ~/.dbt/profiles.yml
-          discovery_snowflake:
+          New-Item -ItemType Directory -Force -Path $HOME\.dbt
+
+              @"
+        discovery_snowflake:
+          target: bronze
+          outputs:
+            bronze:
+              type: snowflake
+              account: $env:SNOWFLAKE_ACCOUNT
+              user: $env:SNOWFLAKE_USER
+              password: $env:SNOWFLAKE_PASSWORD
+              role: $env:SNOWFLAKE_ROLE
+              warehouse: $env:SNOWFLAKE_WAREHOUSE
+              database: $env:ANALYTICS_DATABASE
+              schema: BRONZE
+              threads: 1
+
+            silver:
+              type: snowflake
+              account: $env:SNOWFLAKE_ACCOUNT
+              user: $env:SNOWFLAKE_USER
+              password: $env:SNOWFLAKE_PASSWORD
+              role: $env:SNOWFLAKE_ROLE
+              warehouse: $env:SNOWFLAKE_WAREHOUSE
+              database: $env:ANALYTICS_DATABASE
+              schema: SILVER
+              threads: 1
+
+            gold:
+              type: snowflake
+              account: $env:SNOWFLAKE_ACCOUNT
+              user: $env:SNOWFLAKE_USER
+              password: $env:SNOWFLAKE_PASSWORD
+              role: $env:SNOWFLAKE_ROLE
+              warehouse: $env:SNOWFLAKE_WAREHOUSE
+              database: $env:ANALYTICS_DATABASE
+              schema: GOLD
+              threads: 1
+                "@ | Out-File -Encoding utf8 $HOME\.dbt\profiles.yml
+      - name: Create dbt profile
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path $HOME\.dbt
+
+          @"
+        discovery_snowflake:
             target: bronze
             outputs:
               bronze:
                 type: snowflake
-                account: ${SNOWFLAKE_ACCOUNT}
-                user: ${SNOWFLAKE_USER}
-                password: ${SNOWFLAKE_PASSWORD}
-                role: ${SNOWFLAKE_ROLE}
-                warehouse: ${SNOWFLAKE_WAREHOUSE}
-                database: ${ANALYTICS_DATABASE}
+                account: $env:SNOWFLAKE_ACCOUNT
+                user: $env:SNOWFLAKE_USER
+                password: $env:SNOWFLAKE_PASSWORD
+                role: $env:SNOWFLAKE_ROLE
+                warehouse: $env:SNOWFLAKE_WAREHOUSE
+                database: $env:ANALYTICS_DATABASE
                 schema: BRONZE
                 threads: 1
+
               silver:
                 type: snowflake
-                account: ${SNOWFLAKE_ACCOUNT}
-                user: ${SNOWFLAKE_USER}
-                password: ${SNOWFLAKE_PASSWORD}
-                role: ${SNOWFLAKE_ROLE}
-                warehouse: ${SNOWFLAKE_WAREHOUSE}
-                database: ${ANALYTICS_DATABASE}
+                account: $env:SNOWFLAKE_ACCOUNT
+                user: $env:SNOWFLAKE_USER
+                password: $env:SNOWFLAKE_PASSWORD
+                role: $env:SNOWFLAKE_ROLE
+                warehouse: $env:SNOWFLAKE_WAREHOUSE
+                database: $env:ANALYTICS_DATABASE
                 schema: SILVER
                 threads: 1
+
               gold:
                 type: snowflake
-                account: ${SNOWFLAKE_ACCOUNT}
-                user: ${SNOWFLAKE_USER}
-                password: ${SNOWFLAKE_PASSWORD}
-                role: ${SNOWFLAKE_ROLE}
-                warehouse: ${SNOWFLAKE_WAREHOUSE}
-                database: ${ANALYTICS_DATABASE}
+                account: $env:SNOWFLAKE_ACCOUNT
+                user: $env:SNOWFLAKE_USER
+                password: $env:SNOWFLAKE_PASSWORD
+                role: $env:SNOWFLAKE_ROLE
+                warehouse: $env:SNOWFLAKE_WAREHOUSE
+                database: $env:ANALYTICS_DATABASE
                 schema: GOLD
                 threads: 1
-          EOF
+          "@ | Out-File -Encoding utf8 $HOME\.dbt\profiles.yml
       - name: Run Bronze models
         run: conda run -n dbt_env dbt run --target bronze --select bronze.* || exit 1
 
