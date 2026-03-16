@@ -1,4 +1,4 @@
-# 📊 RFM Analysis projecto with Snowflake, DBT and Python
+# 📊 RFM Analysis project with Snowflake, DBT and Python
 
 ## 📋 1. Project description
 This project performs a complete RFM (Recency, Frequency, Monetary) analysis using transactional data. 
@@ -79,4 +79,5 @@ Medallion architecture.
 
 ## 👤 Author
 **Name**: Miriam Iban Gil 
-**Technologies**: Snowflake, dbt, Python
+**Linkedin**: www.linkedin.com/in/míriam-ibán-880b73185
+
