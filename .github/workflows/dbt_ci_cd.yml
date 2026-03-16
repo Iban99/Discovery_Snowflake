@@ -15,6 +15,13 @@ env:
 jobs:
   dbt-run:
     runs-on: windows-latest
+    env:
+      SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+      SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+      SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+      SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+      SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+      ANALYTICS_DATABASE: ${{ secrets.ANALYTICS_DATABASE }}
 
     steps:
       # 1. Traer el código del repo
