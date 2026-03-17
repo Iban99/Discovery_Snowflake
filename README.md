@@ -76,6 +76,10 @@ Medallion architecture.
 ## 5. Lineage
 ![Lineage](images/Lineage.png)
 
+## 6. BI tool
+A dashboard with visualizations of RFM analysis has been developed.
+It can be accessed from **Tableau Public** via this link: https://public.tableau.com/app/profile/miriam.iban1291/viz/CustomerRFMAnalysis_17737469491920/RFMAnalysis?publish=yes
+
 
 ## 👤 Author
 **Name**: Miriam Iban Gil 
